@@ -1,4 +1,4 @@
 # speech-to-text-demo
 
-Example for tutorial
+This repository contains the example source that is used in tutorial.
 
