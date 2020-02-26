@@ -11,10 +11,25 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var speechRec = SpeechRec()
     var body: some View {
-        Text(speechRec.recognizedText)
-            .font(.largeTitle)
-            .onAppear {
-                self.speechRec.start()
+        VStack {
+            Text(speechRec.recognizedText)
+                .font(.largeTitle)
+                .padding()
+            
+            Button(action: {
+                if self.speechRec.isRunning {
+                    self.speechRec.stop()
+                } else {
+                    self.speechRec.start()
+                }
+            }) {
+                Text(self.speechRec.isRunning ? "Stop" : "Start")
+                    .font(.title)
+                    .padding()
+            }
+        }
+        .onAppear {
+            self.speechRec.start()
         }
     }
 }

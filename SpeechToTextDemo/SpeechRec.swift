@@ -11,6 +11,7 @@ import Speech
 
 class SpeechRec: ObservableObject {
     @Published private(set) var recognizedText = ""
+    @Published private(set) var isRunning = false
     
     let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "ru-RU")) // Use Russian
     var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -18,9 +19,10 @@ class SpeechRec: ObservableObject {
     let audioEngine = AVAudioEngine()
     
     func start() {
-        self.recognizedText = "Слушаю..."
         SFSpeechRecognizer.requestAuthorization { status in
-            self.startRecognition()
+            DispatchQueue.main.async {
+                self.startRecognition()
+            }
         }
     }
     
@@ -42,10 +44,20 @@ class SpeechRec: ObservableObject {
             
             audioEngine.prepare()
             try audioEngine.start()
+            
+            self.recognizedText = "Слушаю..."
+            self.isRunning = true
         }
         
         catch {
             
         }
+    }
+    
+    func stop() {
+        audioEngine.inputNode.removeTap(onBus: 0)
+        audioEngine.stop()
+        recognitionRequest?.endAudio()
+        self.isRunning = false
     }
 }
